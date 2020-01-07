@@ -1,0 +1,143 @@
+<style>
+.sticky {
+	position: sticky;
+	display: block;
+}
+.title{
+	text-align: center;
+}
+.inbl {
+	display: inline-block;
+}
+#valNote {
+	height: 50px;
+	display: block;
+	margin: auto;
+	text-align: center;
+	font-size: 1.1rem;
+	width: 90%;
+	padding: 20px;
+}
+.container-button {
+	display: block;
+	margin: 30px;
+	text-align: center;
+}
+.button {
+	display: inline-block;
+	margin: auto;
+	height: 50px;
+	font-size: 1rem;
+	width: 40%;
+}
+.save {
+	background: #2A9C31;
+	color: #FFF;
+	border: 0px solid black;
+}
+.clear {
+	background: #C92533;
+	color: #FFF;
+	border: 0px solid black;
+}
+#note {
+	width: 93%;
+	margin-left: 0px;
+}
+ul li {
+	text-align: center;
+	list-style: none;
+}
+ul li:nth-child(odd) {
+	background: #EEE;
+}
+ul li:hover {
+	background: #C33;
+	color: #FFF;
+}
+li {
+	height: 40px;
+	padding-top: 20px;
+	margin: 10px 0px;
+}
+.spaceAvailable {
+	text-align: center;
+	color: #555;
+	font-size: 0.8rem;
+	font-family: serif;
+}
+
+</style>
+<div class="sticky">
+<div class="title"><h1 class="inbl">SebarisCatatan</h1> <h5 class="inbl">by yours truly</h5></div>
+
+<input id="valNote" type="text" maxlength="255" placeholder="Masukkan entri disini..." autofocus></input>
+<div class="container-button">
+<button class="button save" type="submit" onclick="newNote();">Simpan catatan</button>
+<button class="button clear" type="button" onclick="clearNote();">Bersihkan catatan</button>
+</div>
+<div class="spaceAvailable"></div>
+</div>
+<br><br><br>
+
+<ul id="note"></ul>
+
+<script>
+if(localStorage.getItem("totalIndex") == null) localStorage.setItem("totalIndex", 0);
+var totalIndex = parseInt(localStorage.getItem("totalIndex"));
+// var noteLength = localStorage.length;
+showAllNotes();
+
+function newNote(){
+	var getInput = document.getElementById("valNote").value;
+
+	if(getInput !== ""){
+		var index = "list" + totalIndex;
+		localStorage.setItem(index, getInput);
+		console.dir(localStorage.getItem(index));
+		totalIndex += 1;
+		localStorage.setItem("totalIndex", totalIndex);
+		document.location.reload(true);
+	}
+}
+
+function clearNote(){
+	localStorage.clear();
+	document.location.reload(true);
+}
+
+function showAllNotes(){
+	var notes = document.getElementById("note");
+	if(totalIndex !== 0) {
+		for(var i = totalIndex-1; i >= 0; i--){
+			var addedNote = localStorage.getItem("list" + i);
+			if(addedNote !== null){
+				notes.insertAdjacentHTML("beforeend", "<li indexValue=list" + i + ">" + addedNote + "</li>");
+			}
+		}
+	} else {
+		notes.insertAdjacentHTML("beforeend", "<h3 style='text-align: center;'>Belum ada entri</h3>");
+	}
+}
+
+document.addEventListener('dblclick', function (event) {
+	if (!event.target.matches('li')) return;
+	localStorage.removeItem(event.target.attributes.indexValue.value);
+	document.location.reload(true);
+}, false);
+
+// script by Mike King from coderwall.com
+var spaceAvailable = document.querySelector(".spaceAvailable");
+var localStorageSpace = function(){
+	var data = '';
+		
+	for(var key in window.localStorage){
+		if(window.localStorage.hasOwnProperty(key)){
+			data += window.localStorage[key];
+		}
+	}
+	spaceAvailable.innerHTML = data ? "<em>Space</em> tersisa: " + (5120 - ((data.length * 16)/(8 * 1024)).toFixed(2)) + ' KB' : '5 MB';
+};
+
+localStorageSpace();
+</script>
